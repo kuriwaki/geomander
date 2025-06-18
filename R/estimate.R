@@ -162,11 +162,9 @@ geo_estimate_up <- function(from, to, value, method = 'center', epsg = 3857) {
     arrange(group)
 
   if (nrow(tb) < nrow(to)) {
-    for (i in 1:nrow(to)) {
-      if (tb$group[i] != i) {
-        tb <- tb |> add_row(group = i, value = 0, .after = (i - 1))
-      }
-    }
+    # if group exists in tb, use that; otherwise leave at 0
+    tb <- tibble(group = 1:nrow(to), value = 0) |> 
+      dplyr::rows_update(tb, by = "group")
   }
 
   tb$value
